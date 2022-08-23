@@ -4,11 +4,20 @@ var userAddres = (sequelize) => {
     sequelize.define('user_address', {
         address_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'address',
+                key: 'id'
+            }
+
         },
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'user',
+                key: 'id'
+            }
         }
     }, {
         tableName: 'user_addresses',
