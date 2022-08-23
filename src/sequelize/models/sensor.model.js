@@ -1,5 +1,4 @@
-var { Model, DataTypes } = require('sequelize');
-var sequelize = require('../libraries/Database');
+var { DataTypes } = require('sequelize');
 
 var sensor = (sequelize) => {
     sequelize.define('sensor', {
