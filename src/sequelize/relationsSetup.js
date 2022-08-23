@@ -2,11 +2,11 @@ function ralationsSetup(sequelize) {
     var {
         country,
         address,
-        sensorData,
+        sensor_data,
         sensor,
         user,
         token,
-        userAddress
+        user_address
     } = sequelize.models;
 
     country.hasMany(address, {
@@ -19,10 +19,10 @@ function ralationsSetup(sequelize) {
         foreignKey: 'address_id',
     });
     sensor.belongsTo(address);
-    address.hasMany(sensorData, {
+    address.hasMany(sensor_data, {
         foreignKey: 'address_id',
     });
-    sensorData.belongsTo(address);
+    sensor_data.belongsTo(address);
 
     user.hasMany(sensor, {
         foreignKey: 'user_id',
@@ -33,6 +33,8 @@ function ralationsSetup(sequelize) {
     });
     token.belongsTo(user);
 
-    user.belongsToMany(address, { through: userAddress });
-    address.belongsToMany(user, { through: userAddress });
+    user.belongsToMany(address, { through: user_address });
+    address.belongsToMany(user, { through: user_address });
 }
+
+module.exports = ralationsSetup;
