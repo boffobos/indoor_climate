@@ -10,5 +10,6 @@ var country = (sequelize) => {
     }, {
         timestamps: false
     })
-}
+};
+
 module.exports = country;

@@ -1,6 +1,6 @@
 var { DataTypes } = require('sequelize');
 
-var userAddres = (sequelize) => {
+var userAddress = (sequelize) => {
     sequelize.define('user_address', {
         address_id: {
             type: DataTypes.INTEGER,
@@ -25,4 +25,4 @@ var userAddres = (sequelize) => {
     });
 };
 
-module.exports = userAddres;
+module.exports = userAddress;
