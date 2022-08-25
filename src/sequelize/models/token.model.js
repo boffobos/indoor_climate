@@ -14,7 +14,8 @@ var token = (sequelize) => {
         },
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: 'user'
         }
     }, {
         timestamps: false

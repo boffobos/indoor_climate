@@ -1,5 +1,7 @@
-function ralationsSetup(sequelize) {
-    var {
+var { DataTypes } = require('sequelize')
+
+function relationsSetup(sequelize) {
+    const {
         country,
         address,
         sensor_data,
@@ -9,32 +11,85 @@ function ralationsSetup(sequelize) {
         user_address
     } = sequelize.models;
 
+    // country - addresses
     country.hasMany(address, {
-        foreignKey: 'country_id',
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'country_id',
+            allowNull: false,
+        }
+    });
+    address.belongsTo(country, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'country_id',
+            allowNull: false
+        },
         sourceKey: 'id' //just example to define source key to refer to
     });
-    address.belongsTo(country);
-
+    // address - sensors
     address.hasMany(sensor, {
-        foreignKey: 'address_id',
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'address_id',
+            allowNull: false,
+        }
     });
-    sensor.belongsTo(address);
+    sensor.belongsTo(address, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'address_id',
+            allowNull: false,
+        }
+    });
+    // address - sensors_data
     address.hasMany(sensor_data, {
-        foreignKey: 'address_id',
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'address_id',
+            allowNull: false,
+        }
     });
-    sensor_data.belongsTo(address);
-
+    sensor_data.belongsTo(address, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'address_id',
+            allowNull: false,
+        }
+    });
+    // User - Sensors
     user.hasMany(sensor, {
-        foreignKey: 'user_id',
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'user_id',
+            allowNull: false,
+        }
     });
-    sensor.belongsTo(user);
+    sensor.belongsTo(user, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'user_id',
+            allowNull: false,
+        }
+    });
+    // User - Tokens
     user.hasMany(token, {
-        foreignKey: 'user_id',
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'user_id',
+            allowNull: false,
+        }
     });
-    token.belongsTo(user);
-
+    token.belongsTo(user, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'user_id',
+            allowNull: false,
+        }
+    });
+    // users - addresses
     user.belongsToMany(address, { through: user_address });
     address.belongsToMany(user, { through: user_address });
 }
 
-module.exports = ralationsSetup;
+module.exports = relationsSetup;

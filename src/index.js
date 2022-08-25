@@ -4,7 +4,6 @@ var path = require('node:path');
 // const sequelize = require('sequelize');
 // var { Sequelize } = require('sequelize');
 // const sequelize = require('./libraries/Database');
-const User = require('./models/user.model');
 var server = http.createServer();
 
 // var me = User.create({
@@ -18,17 +17,17 @@ var server = http.createServer();
 //     console.log('Failed to add user to db', e);
 // })
 
-var users = User.findAll();
-users.then(data => {
-    data.every(user => console.log(user.getDataValue('email')));
-});
+// var users = User.findAll();
+// users.then(data => {
+//     data.every(user => console.log(user.getDataValue('email')));
+// });
 
 server.on('request', (req, res) => {
     const { url, method, headers } = req;
     // console.log(url);
     // console.log(method);
     // console.log(headers);
-    if (headers['content-type'] == 'application/json') {
+    if (headers['content-type'] == 'application/json' && method === 'POST') {
         let body = [];
         req.on('data', (chunk) => {
             body.push(chunk)
