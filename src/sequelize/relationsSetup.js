@@ -88,8 +88,22 @@ function relationsSetup(sequelize) {
         }
     });
     // users - addresses
-    user.belongsToMany(address, { through: user_address });
-    address.belongsToMany(user, { through: user_address });
+    user.belongsToMany(address, {
+        through: user_address,
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'user_id',
+            allowNull: false
+        }
+    });
+    address.belongsToMany(user, {
+        through: user_address,
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'address_id',
+            allowNull: false
+        }
+    });
 }
 
 module.exports = relationsSetup;
