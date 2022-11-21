@@ -34,7 +34,7 @@ var user = (sequelize) => {
                         var password = `${salt}:${hash.toString('hex')}`;
                         user.password = password;
                         resolve(user);
-                    })
+                    });
                 });
             }
         }
