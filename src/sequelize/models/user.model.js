@@ -24,7 +24,7 @@ var user = (sequelize) => {
         createdAt: 'registered',
         updatedAt: false,
         hooks: {
-            async beforeCreate(user) {
+            async beforeSave(user) {
                 if (user.changed('password') || user.isNewRecord) {
                     user.password = await cryptPassword.hash(user.password);
                 }

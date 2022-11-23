@@ -5,8 +5,19 @@ var generateAuthToken = require('../../utils/generateAuthToken');
 
 var User = models.user;
 
-function excludedFields() {
-    return { exclude: ['password', 'registered'] };
+function excludeFieldsFromUsers(users) {
+    var exclude = ['password', 'registered'];
+    if (!Array.isArray(users)) {
+        users = [users];
+    }
+    var usr = users.map(user => {
+        user = user.toJSON();
+        exclude.forEach(prop => {
+            delete user[prop];
+        });
+        return user;
+    })
+    return usr;
 }
 
 
@@ -23,11 +34,8 @@ router.post('/user/create', async function create(req, res) {
 
 router.get('/user/getall', async function getAll(req, res) {
     try {
-        var users = await User.findAll({
-            attributes: excludedFields()
-        });
-
-        res.status(200).json(users);
+        var users = await User.findAll();
+        res.status(200).json(excludeFieldsFromUsers(users));
     } catch (e) {
         res.status(404).send('Invalid request');
     }
@@ -39,10 +47,8 @@ router.get('/user/:id', async function getById(req, res) {
         res.status(404).send();
     } else {
         try {
-            var user = await User.findByPk(id, {
-                attributes: excludedFields()
-            });
-            user ? res.status(200).json(user) : res.status(404).send('404 user not found');
+            var user = await User.findByPk(id);
+            user ? res.status(200).json(excludeFieldsFromUsers(user)[0]) : res.status(404).send('404 user not found');
         } catch (e) {
             res.status(500).send();
         }
@@ -57,8 +63,9 @@ router.post('/user/login', async function login(req, res) {
         if (!isVerified) {
             return res.status(400).send('authentification failed');
         }
-        var token = await generateAuthToken(user.toJSON());
+        var token = await generateAuthToken({ id: user.toJSON().id });
         await user.createToken({ token });
+        user = excludeFieldsFromUsers(user)[0];
         res.send({ user, token });
     } catch (e) {
         res.status(400).send()
