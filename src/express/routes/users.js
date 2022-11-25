@@ -75,6 +75,16 @@ router.get('/user/logout', auth, async function logout(req, res) {
     }
 });
 
+router.get('/user/logoutAll', auth, async function logoutAll(req, res) {
+    try {
+        await Token.destroy({ where: { user_id: req.user.id } });
+        res.send();
+    } catch (e) {
+        console.log(e);
+        res.status(400).send();
+    }
+});
+
 async function getUserAddresses(req, res) {
 
 }
