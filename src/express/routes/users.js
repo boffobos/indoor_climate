@@ -2,8 +2,10 @@ var router = require('express').Router();
 var { models } = require('../../sequelize/index');
 var cryptPassword = require('../../utils/cryptPassword');
 var generateAuthToken = require('../../utils/generateAuthToken');
+var auth = require('../../utils/auth');
 
 var User = models.user;
+var Token = models.token;
 
 function excludeFieldsFromUsers(users) {
     var exclude = ['password', 'registered'];
@@ -41,18 +43,10 @@ router.get('/user/getall', async function getAll(req, res) {
     }
 });
 
-router.get('/user/:id', async function getById(req, res) {
-    var id = Number.parseInt(req.params.id);
-    if (Number.isNaN(id)) {
-        res.status(404).send();
-    } else {
-        try {
-            var user = await User.findByPk(id);
-            user ? res.status(200).json(excludeFieldsFromUsers(user)[0]) : res.status(404).send('404 user not found');
-        } catch (e) {
-            res.status(500).send();
-        }
-    }
+router.get('/user/me', auth, async function getProfile(req, res) {
+    var user = excludeFieldsFromUsers(req.user);
+    res.send({ user: user, token: req.token });
+
 });
 
 router.post('/user/login', async function login(req, res) {
@@ -63,12 +57,21 @@ router.post('/user/login', async function login(req, res) {
         if (!isVerified) {
             return res.status(400).send('authentification failed');
         }
-        var token = await generateAuthToken({ id: user.toJSON().id });
+        var token = await generateAuthToken({ id: user.id });
         await user.createToken({ token });
         user = excludeFieldsFromUsers(user)[0];
-        res.send({ user, token });
+        res.status(200).send({ user, token });
     } catch (e) {
         res.status(400).send()
+    }
+});
+
+router.get('/user/logout', auth, async function logout(req, res) {
+    try {
+        await Token.destroy({ where: { token: req.token } });
+        res.send();
+    } catch (e) {
+        res.status(400).send();
     }
 });
 

@@ -1,4 +1,5 @@
 var { DataTypes } = require('sequelize');
+var ms = require('ms');
 
 var token = (sequelize) => {
     sequelize.define('token', {
@@ -10,7 +11,7 @@ var token = (sequelize) => {
         },
         expired: {
             type: DataTypes.DATE,
-            defaultValue: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).valueOf(),
+            defaultValue: new Date(Date.now() + ms(process.env.JWT_EXPIRES_IN)).valueOf(),
             allowNull: false,
         },
         user_id: {
