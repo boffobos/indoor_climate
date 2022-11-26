@@ -3,9 +3,11 @@ var { models } = require('../../sequelize/index');
 var cryptPassword = require('../../utils/cryptPassword');
 var generateAuthToken = require('../../utils/generateAuthToken');
 var auth = require('../../utils/auth');
+const { user } = require('../../sequelize/models');
 
 var User = models.user;
 var Token = models.token;
+var Address = models.address;
 
 function excludeFieldsFromUsers(users) {
     var exclude = ['password', 'registered'];
@@ -13,7 +15,7 @@ function excludeFieldsFromUsers(users) {
         users = [users];
     }
     var usr = users.map(user => {
-        user = user.toJSON();
+        user = user.dataValues;
         exclude.forEach(prop => {
             delete user[prop];
         });
@@ -34,7 +36,7 @@ router.post('/user/create', async function create(req, res) {
     }
 });
 
-router.get('/user/getall', async function getAll(req, res) {
+router.get('/user/getall', auth, async function getAll(req, res) {
     try {
         var users = await User.findAll();
         res.status(200).json(excludeFieldsFromUsers(users));
@@ -80,7 +82,26 @@ router.get('/user/logoutAll', auth, async function logoutAll(req, res) {
         await Token.destroy({ where: { user_id: req.user.id } });
         res.send();
     } catch (e) {
-        console.log(e);
+        res.status(400).send();
+    }
+});
+
+router.post('/user/addAddress', auth, async function addAddress(req, res) {
+    try {
+        var body = req.body;
+        var user = req.user;
+        var address = await Address.findOrCreate({
+            where: body
+        });
+        address = await Address.findOne({ where: body });
+
+        if (!address) {
+            throw new Error('Failed to create address');
+        }
+
+        await user.setAddresses(address);
+        res.send({ user, token: req.token });
+    } catch (e) {
         res.status(400).send();
     }
 });

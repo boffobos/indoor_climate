@@ -25,7 +25,7 @@ function relationsSetup(sequelize) {
             name: 'country_id',
             allowNull: false
         },
-        sourceKey: 'id' //just example to define source key to refer to
+        targetKey: 'id' //just example to define source key to refer to
     });
     // address - sensors
     address.hasMany(sensor, {
