@@ -82,11 +82,21 @@ router.get('/user/logoutAll', auth, async function logoutAll(req, res) {
         await Token.destroy({ where: { user_id: req.user.id } });
         res.send();
     } catch (e) {
-        res.status(400).send();
+        res.sendStatus(400);
     }
 });
 
-router.post('/user/addAddress', auth, async function addAddress(req, res) {
+router.delete('/user/delete', auth, async function deleteUser(req, res) {
+    try {
+        var result = req.user.destroy();
+        console.log(result);
+        res.sendStatus(200);
+    } catch (e) {
+        res.sendStatus(500);
+    }
+});
+
+router.post('/user/address', auth, async function addAddress(req, res) {
     try {
         var body = req.body;
         var user = req.user;
@@ -99,16 +109,34 @@ router.post('/user/addAddress', auth, async function addAddress(req, res) {
             throw new Error('Failed to create address');
         }
 
-        await user.setAddresses(address);
-        res.send({ user, token: req.token });
+        await user.addAddresses(address);
+        res.send({ user, token: req.token, address });
     } catch (e) {
-        res.status(400).send();
+        res.sendStatus(400);
     }
 });
 
-async function getUserAddresses(req, res) {
+router.delete('/user/address/:id', auth, async function deleteAddres(req, res) {
+    try {
+        if (await req.user.removeAddresses(req.params.id) === 0) {
+            return res.status(400).send({ token: req.token });
+        }
+        res.send({ token: req.token });
+    } catch (e) {
+        res.sendStatus(500);
+    }
+});
 
-}
+router.get('/user/address/', auth, async function getUserAddresses(req, res) {
+    try {
+        var addresses = await req.user.getAddresses();
+        res.send({ addresses, token: req.token });
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(400);
+    }
+});
+
 
 
 module.exports = router;
