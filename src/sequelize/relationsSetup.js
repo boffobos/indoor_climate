@@ -11,7 +11,7 @@ function relationsSetup(sequelize) {
         user_address
     } = sequelize.models;
 
-    // country - addresses
+    // Country - Addresses
     country.hasMany(address, {
         foreignKey: {
             type: DataTypes.INTEGER,
@@ -27,7 +27,8 @@ function relationsSetup(sequelize) {
         },
         targetKey: 'id' //just example to define source key to refer to
     });
-    // address - sensors
+
+    // Address - Sensors
     address.hasMany(sensor, {
         foreignKey: {
             type: DataTypes.INTEGER,
@@ -42,7 +43,8 @@ function relationsSetup(sequelize) {
             allowNull: false,
         }
     });
-    // address - sensors_data
+
+    // Address - Sensors_data
     address.hasMany(sensor_data, {
         foreignKey: {
             type: DataTypes.INTEGER,
@@ -57,6 +59,7 @@ function relationsSetup(sequelize) {
             allowNull: false,
         }
     });
+
     // User - Sensors
     user.hasMany(sensor, {
         foreignKey: {
@@ -72,22 +75,38 @@ function relationsSetup(sequelize) {
             allowNull: false,
         }
     });
+
+    // Sensor - Tokens
+    sensor.hasMany(token, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'sensor_id'
+        }
+    });
+    token.belongsTo(sensor, {
+        foreignKey: {
+            type: DataTypes.INTEGER,
+            name: 'sensor_id'
+        }
+    });
+
     // User - Tokens
     user.hasMany(token, {
         foreignKey: {
             type: DataTypes.INTEGER,
             name: 'user_id',
-            allowNull: false,
+            // allowNull: false,
         }
     });
     token.belongsTo(user, {
         foreignKey: {
             type: DataTypes.INTEGER,
             name: 'user_id',
-            allowNull: false,
+            // allowNull: false,
         }
     });
-    // users - addresses
+
+    // Users - Addresses
     user.belongsToMany(address, {
         through: user_address,
         foreignKey: {

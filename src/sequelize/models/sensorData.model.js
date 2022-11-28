@@ -4,15 +4,18 @@ var sensorData = (sequelize) => {
     sequelize.define('sensor_data', {
         temperature: {
             type: DataTypes.FLOAT,
-            allowNull: false
+            // allowNull: false
         },
         humidity: {
             type: DataTypes.FLOAT,
-            allowNull: false
+            // allowNull: false
+        },
+        pressure: {
+            type: DataTypes.FLOAT
         },
         address_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            // allowNull: false
         },
         place: DataTypes.STRING
     }, {

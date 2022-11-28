@@ -3,7 +3,6 @@ var { models } = require('../../sequelize/index');
 var cryptPassword = require('../../utils/cryptPassword');
 var generateAuthToken = require('../../utils/generateAuthToken');
 var auth = require('../../utils/auth');
-const { user } = require('../../sequelize/models');
 
 var User = models.user;
 var Token = models.token;
@@ -23,7 +22,6 @@ function excludeFieldsFromUsers(users) {
     })
     return usr;
 }
-
 
 router.post('/user/create', async function create(req, res) {
     var body = req.body;
@@ -136,7 +134,5 @@ router.get('/user/address/', auth, async function getUserAddresses(req, res) {
         res.sendStatus(400);
     }
 });
-
-
 
 module.exports = router;
