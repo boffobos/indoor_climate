@@ -4,30 +4,26 @@ var sequelize = new Sequelize(`${DIALECT}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}
 var models = require('./models/index');
 var relations = require('./relationsSetup');
 var crypto = require('node:crypto');
+var addCountriesSQL = require('./models/countriesList');
 
 for (const model in models) {
     models[model](sequelize);
 }
 
-
-// Add hooks
-
-// var User = sequelize.models.user;
-// User.addHook('beforeSave', (user) => {
-//     console.log('from hook');
-//     console.log(user.password);
-//     var salt = crypto.randomBytes(16).toString('hex');
-//     crypto.pbkdf2(user.password, salt, 513, 59, 'SHA256', (error, hash) => {
-//         if (error) {
-//             throw new Error('Password hash was not created');
-//         }
-//         var password = `${salt}:${hash.toString('hex')}`;
-//         user.password = password;
-//         console.log(user.password);
-//     });
-// });
-
 relations(sequelize);
+
+sequelize.models.country.findAll().then(result => {
+    if (result.length === 0) {
+        return sequelize.query(addCountriesSQL);
+    }
+    return
+}).then(countries => {
+    if (countries.length > 1) {
+        console.log('Added coutries to database');
+    }
+}).catch(e => {
+    console.log('Inserting countries into the table failed');
+});
 
 
 module.exports = sequelize;

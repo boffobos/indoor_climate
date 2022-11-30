@@ -4,7 +4,7 @@ var cryptPassword = require('../../utils/cryptPassword');
 
 var user = (sequelize) => {
     sequelize.define('user', {
-        name: {
+        nickname: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -19,6 +19,14 @@ var user = (sequelize) => {
         password: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        firstName: {
+            type: DataTypes.STRING,
+            field: 'first_name'
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            field: 'last_name'
         }
     }, {
         createdAt: 'registered',
