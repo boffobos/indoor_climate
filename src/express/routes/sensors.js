@@ -7,6 +7,7 @@ var auth = require('../../utils/auth');
 var User = models.user;
 var Sensor = models.sensor;
 var Sensor_data = models.sensor_data;
+var Token = models.token;
 
 
 router.post('/sensor/register', async function registerSendsor(req, res) {
@@ -17,7 +18,7 @@ router.post('/sensor/register', async function registerSendsor(req, res) {
         var isVerified = await cryptPassword.verify(body.password, user.password);
 
         if (!isVerified) {
-            return res.status(40).send('Authentification failed!');
+            return res.status(400).send('Authentification failed!');
         }
 
         var sensor = await Sensor.findOne({
@@ -35,6 +36,11 @@ router.post('/sensor/register', async function registerSendsor(req, res) {
             });
         }
         var token = await generateAuthToken({ id: sensor.id });
+        await Token.destroy({
+            where: {
+                sensor_id: sensor.id
+            }
+        })
         await sensor.createToken({ token });
         res.status(200).send({ token });
 
