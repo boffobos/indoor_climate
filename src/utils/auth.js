@@ -9,6 +9,9 @@ async function auth(req, res, next) {
     try {
         var bearerToken = req.header('Authorization').replace('Bearer ', '');
         var token = await Token.findByPk(bearerToken);
+        if (!token) {
+            throw new Error('Please authenticate!');
+        }
         if (token?.user_id) {
             var user = await token.getUser();
         } else if (token?.sensor_id) {
