@@ -12,7 +12,6 @@ var Sensor_data = models.sensor_data;
 router.post('/sensor/register', async function registerSendsor(req, res) {
     try {
         var body = req.body;
-        console.log(body);
         var user = await User.findOne({ where: { email: body.email } });
         var addresses = await user.getAddresses();
         var isVerified = await cryptPassword.verify(body.password, user.password);
@@ -27,9 +26,7 @@ router.post('/sensor/register', async function registerSendsor(req, res) {
                 mac: body.mac,
             }
         });
-        console.log(sensor);
         if (!sensor) {
-            console.log('if statement');
             sensor = await Sensor.create({
                 user_id: user.dataValues.id,
                 mac: body.mac,
@@ -37,13 +34,11 @@ router.post('/sensor/register', async function registerSendsor(req, res) {
                 address_id: addresses[0].id
             });
         }
-        console.log(sensor);
         var token = await generateAuthToken({ id: sensor.id });
         await sensor.createToken({ token });
         res.status(200).send({ token });
 
     } catch (e) {
-        console.log(e);
         res.sendStatus(400);
     }
 });

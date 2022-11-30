@@ -13,6 +13,7 @@ function excludeFieldsFromUsers(users) {
     if (!Array.isArray(users)) {
         users = [users];
     }
+
     var usr = users.map(user => {
         user = user.dataValues;
         exclude.forEach(prop => {
@@ -20,6 +21,9 @@ function excludeFieldsFromUsers(users) {
         });
         return user;
     })
+    if (usr.length === 1) {
+        return usr[0];
+    }
     return usr;
 }
 
@@ -37,7 +41,7 @@ router.post('/user/create', async function create(req, res) {
 router.get('/user/getall', auth, async function getAll(req, res) {
     try {
         var users = await User.findAll();
-        res.status(200).json(excludeFieldsFromUsers(users));
+        res.status(200).send(excludeFieldsFromUsers(users));
     } catch (e) {
         res.status(404).send('Invalid request');
     }
@@ -47,6 +51,27 @@ router.get('/user/me', auth, async function getProfile(req, res) {
     var user = excludeFieldsFromUsers(req.user);
     res.send({ user: user, token: req.token });
 
+});
+
+router.patch('/user/me', auth, async function updateUserProfile(req, res) {
+    var allowedUpdates = ['firstName', 'lastName', 'password', 'nickname'];
+    var updates = Object.keys(req.body);
+    var isValidUpdate = updates.every(update => allowedUpdates.includes(update));
+    if (!isValidUpdate) {
+        res.status(400).send({ error: 'Invalid updates!' });
+    }
+    try {
+        var user = req.user;
+        updates.forEach(update => {
+            user.set(update, req.body[update]);
+        });
+        console.log(user);
+        await user.save();
+        res.send({ user: excludeFieldsFromUsers(user), token: req.token });
+
+    } catch (e) {
+        res.sendStatus(400);
+    }
 });
 
 router.post('/user/login', async function login(req, res) {
@@ -59,7 +84,7 @@ router.post('/user/login', async function login(req, res) {
         }
         var token = await generateAuthToken({ id: user.id });
         await user.createToken({ token });
-        user = excludeFieldsFromUsers(user)[0];
+        user = excludeFieldsFromUsers(user);
         res.status(200).send({ user, token });
     } catch (e) {
         res.status(400).send()
