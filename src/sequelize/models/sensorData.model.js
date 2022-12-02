@@ -17,7 +17,10 @@ var sensorData = (sequelize) => {
             type: DataTypes.INTEGER,
             // allowNull: false
         },
-        place: DataTypes.STRING
+        place: DataTypes.STRING,
+        time: {
+            type: DataTypes.DATE
+        }
     }, {
         tableName: 'sensors_data',
         createdAt: 'time',
