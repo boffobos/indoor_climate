@@ -9,21 +9,23 @@ var Token = models.token;
 router.get('/sdata', async function getSensorData(req, res) {
     // if (req.query) {
     // }
-    var tableAttributes = SensorData.getAttributes();
-    var from = new Date(req.query.from);
-    var to = new Date(req.query.to);
-    var values = [];
-    for (let key in req.query) {
-        key = key.toLowerCase();
-        if (req.query[key].toLowerCase() === 'true') {
-            for (let attribute in tableAttributes) {
-                if (key === attribute.toLowerCase()) {
-                    values.push(key.toLowerCase());
+    try {
+        var tableAttributes = SensorData.getAttributes();
+        console.log(req.query.from, req.query.to);
+        var from = new Date(req.query.from);
+        var to = new Date(req.query.to);
+        var values = [];
+        for (let key in req.query) {
+            key = key.toLowerCase();
+            if (req.query[key].toLowerCase() === 'true') {
+                for (let attribute in tableAttributes) {
+                    if (key === attribute.toLowerCase()) {
+                        values.push(key.toLowerCase());
+                    }
                 }
             }
         }
-    }
-    try {
+
         var data = await SensorData.findAll({
             attributes: values,
             where: {
@@ -31,7 +33,7 @@ router.get('/sdata', async function getSensorData(req, res) {
             }
         });
         // var data = await SensorData.findAll();
-        console.log(data.length);
+        // console.log(data.length);
         res.send(data);
     } catch (e) {
         console.log(e);

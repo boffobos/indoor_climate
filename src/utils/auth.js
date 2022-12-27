@@ -1,7 +1,6 @@
 var jwt = require('jsonwebtoken');
 var generateAuthToken = require('../utils/generateAuthToken');
 var sequelize = require('../sequelize/index');
-const { sensor } = require('../sequelize/models');
 var Token = sequelize.models.token;
 
 
@@ -22,17 +21,23 @@ async function auth(req, res, next) {
             if (error && error.expiredAt) {
                 var periodOfTokenInactivityDays = new Date(Date.now() - error.expiredAt).valueOf() / (1000 * 60 * 60 * 24);
                 if (periodOfTokenInactivityDays <= process.env.JWT_INACTIVITY_ALLOWED_DAYS) {
-                    var newToken = await generateAuthToken({ id: user.id || sensor.id });
-                    await user.createToken({ token: newToken });
-                    await token.destroy();
-                    req.token = newToken;
-                    user ? req.user = user : req.sensor = sensor;
-                    next();
+                    if (user) {
+                        console.log('genetaing new token for user');
+                        const newToken = await generateAuthToken({ id: user.id });
+                        let newTokenObj = await user.createToken({ token: newToken });
+                        await token.destroy();
+                        token = newTokenObj;
+                    } else if (sensor) {
+                        console.log('genetaing new token for sensor');
+                        const newToken = await generateAuthToken({ id: sensor.id });
+                        let newTokenObj = await sensor.createToken({ token: newToken });
+                        await token.destroy();
+                        token = newTokenObj;
+                    }
                 } else {
                     //When token exeeds limit of days from issue time it should be deleted from db
                     await token.destroy();
-                    res.status(401).send({ error: 'Token expired. Please authenticate!' });
-                    return;
+                    throw new Error({ error: 'Token expired. Please authenticate!' });
                 }
 
             } else if (error) {
@@ -40,8 +45,7 @@ async function auth(req, res, next) {
                 if (token) {
                     await token.destroy();
                 }
-                res.status(401).send({ error: 'Token failure. Please authenticate!' });
-                return;
+                throw new Error({ error: 'Token failure. Please authenticate!' });
             }
             req.token = token.token;
             user ? req.user = user : req.sensor = sensor;

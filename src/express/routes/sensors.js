@@ -9,6 +9,13 @@ var Sensor = models.sensor;
 var Sensor_data = models.sensor_data;
 var Token = models.token;
 
+/* For testing ESP32 on deepsleep mode */
+var fs = require('node:fs/promises');
+var path = require('path');
+
+var dirname = path.join(__dirname, '../../tests/');
+var fileName = 'data.txt';
+
 
 router.post('/sensor/register', async function registerSendsor(req, res) {
     try {
@@ -61,7 +68,7 @@ router.post('/sensor/data', auth, async (req, res) => {
             place: req.body?.room || '',
             address_id: address.id
         });
-        res.status(200).send({ token: req.token });
+        res.send({ token: req.token });
 
     } catch (e) {
         res.sendStatus(500);
@@ -70,24 +77,27 @@ router.post('/sensor/data', auth, async (req, res) => {
 });
 
 
-//temp for testing old sensor posts path
-// router.post('/post-sensor-data', (req, res) => {
-//     // console.log(req.headers);
-//     // if (typeof req.body === 'object') {
-//     //     console.log(req.body);
-//     //     res.sendStatus(200);
-//     // } else {
-//     //     try {
-//     //         body = JSON.parse(req.body);
-//     //         console.log(body);
-//     //         res.sendStatus(200);
-//     //     } catch {
-//     //         res.send('JSON only accepted').status(406);
-//     //     }
-//     // }
+// temp for testing old sensor posts path
+router.post('/post-sensor-data', async (req, res) => {
+    // console.log(req.headers);
+    // if (typeof req.body === 'object') {
+    //     console.log(req.body);
+    //     res.sendStatus(200);
+    // } else {
+    //     try {
+    //         body = JSON.parse(req.body);
+    //         console.log(body);
+    //         res.sendStatus(200);
+    //     } catch {
+    //         res.send('JSON only accepted').status(406);
+    //     }
+    // }
 
-//     console.log(res.body);
-//     res.sendStatus(200);
-// })
+    var fileStreem = await fs.open(dirname + fileName, 'a')
+    await fileStreem.appendFile(`${new Date().toLocaleString('ru-RU')}  ${req.body?.temperature || 0}   ${req.body?.humidity || 0}\r\n`);
+    await fileStreem.close();
+    console.log(req.body);
+    res.sendStatus(200);
+})
 
 module.exports = router;
