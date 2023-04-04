@@ -65,7 +65,7 @@ router.patch('/user/me', auth, async function updateUserProfile(req, res) {
         updates.forEach(update => {
             user.set(update, req.body[update]);
         });
-        console.log(user);
+        // console.log(user);
         await user.save();
         res.send({ user: excludeFieldsFromUsers(user), token: req.token });
 

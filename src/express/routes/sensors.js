@@ -39,8 +39,13 @@ router.post('/sensor/register', async function registerSendsor(req, res) {
                 user_id: user.dataValues.id,
                 mac: body.mac,
                 room: body.room,
-                address_id: addresses[0].id
+                address_id: addresses[0].id //change in future to selected address by user
             });
+        } else {
+            await sensor.update({ //may be should to separete this action to separate route /sensor/update?
+                room: body.room,
+                address_id: addresses[0].id //change in future to selected address by user
+            })
         }
         var token = await generateAuthToken({ id: sensor.id });
         await Token.destroy({
@@ -65,7 +70,7 @@ router.post('/sensor/data', auth, async (req, res) => {
             temperature: req.body?.temperature || 0,
             humidity: req.body?.humidity || 0,
             pressure: req.body?.pressure || 0,
-            place: req.body?.room || '',
+            place: sensor.room || '',
             address_id: address.id
         });
         res.send({ token: req.token });
