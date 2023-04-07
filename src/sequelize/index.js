@@ -7,22 +7,24 @@ var crypto = require('node:crypto');
 var addCountriesSQL = require('./models/countriesList');
 
 for (const model in models) {
-    models[model](sequelize);
+	models[model](sequelize);
 }
 
 relations(sequelize);
 
+sequelize.sync();  //check if it is possible to create new db without that
+
 sequelize.models.country.findAll().then(result => {
-    if (result.length === 0) {
-        return sequelize.query(addCountriesSQL);
-    }
-    return
+	if (result.length === 0) {
+		return sequelize.query(addCountriesSQL);
+	}
+	return
 }).then(countries => {
-    if (countries.length > 1) {
-        console.log('Added coutries to database');
-    }
+	if (countries.length > 1) {
+		console.log('Added coutries to database');
+	}
 }).catch(e => {
-    console.log('Inserting countries into the table failed');
+	console.log('Inserting countries into the table failed');
 });
 
 
