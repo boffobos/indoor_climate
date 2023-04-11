@@ -18,4 +18,4 @@ docker run --rm -dp '5432:5432' --name $DB_CONT_NAME \
 postgres:11-alpine && \
 \
 docker build -t "$SERV_CONT_NAME" . && \
-docker run -dp '3000:3000' --name "${SERV_CONT_NAME}_container" --network "$NET_NAME" "$SERV_CONT_NAME"
+docker run -rm -dp '3000:3000' --name "${SERV_CONT_NAME}_container" --network "$NET_NAME" "$SERV_CONT_NAME"
