@@ -1,33 +1,33 @@
 {
-  "name": "humidity_data",
-  "version": "1.0.0",
-  "description": "pet project for monitoring microclimate in apartments",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --watch src/ src/index.js",
-    "startTest": "nodemon --watch src/ src/tests/checkModels.js",
-    "dev": "nodemon --watch src/ src/index.js"
-  },
-  "keywords": [
-    "humidity",
-    "climate",
-    "monitoring"
-  ],
-  "author": "Denis Zhurov",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.20.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.1",
-    "express": "^4.18.1",
-    "jsonwebtoken": "^8.5.1",
-    "pg": "^8.7.3",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.25.7",
-    "validator": "^13.7.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.19"
-  }
+	"name": "humidity_data",
+	"version": "1.0.0",
+	"description": "pet project for monitoring microclimate in apartments",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node src/index.js",
+		"startTest": "nodemon --watch src/ src/tests/checkModels.js",
+		"dev": "nodemon --watch src/ src/index.js"
+	},
+	"keywords": [
+		"humidity",
+		"climate",
+		"monitoring"
+	],
+	"author": "Denis Zhurov",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.20.0",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.1",
+		"express": "^4.18.1",
+		"jsonwebtoken": "^8.5.1",
+		"pg": "^8.7.3",
+		"pg-hstore": "^2.3.4",
+		"sequelize": "^6.25.7",
+		"validator": "^13.7.0"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.19"
+	}
 }
