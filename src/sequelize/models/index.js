@@ -5,5 +5,6 @@ module.exports = {
     sensor: require('./sensor.model'),
     user: require('./user.model'),
     token: require('./token.model'),
-    userAddress: require('./userAddress.model')
+    userAddress: require('./userAddress.model'),
+    outdoorWeather: require('./outdoorWeather.model')
 }
